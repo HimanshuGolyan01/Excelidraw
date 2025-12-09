@@ -2,7 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { middleware } from "./middleware";
 import { JWT_SECRET } from "@repo/backend-common/config";
-import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "@repo/common";
+import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "@repo/common/types";
 
 const app = express();
 app.use(express.json());
