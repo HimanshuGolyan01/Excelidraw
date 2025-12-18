@@ -8,19 +8,22 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@repo/backend-common": "workspace:*",
+    "@repo/common": "workspace:*",
+    "@repo/db": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@repo/common" : "workspace:*",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
+    "cors": "^2.8.5",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "@repo/backend-common" : "workspace:*"
+    "jsonwebtoken": "^9.0.3"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
