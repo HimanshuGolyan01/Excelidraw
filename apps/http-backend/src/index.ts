@@ -9,7 +9,7 @@ import cors from "cors";
 const app = express();
 app.use(express.json());
 app.use(cors())
-
+// console.log("Backend is running")
 app.post("/signup", async (req, res) => {
 
     const parsedData = CreateUserSchema.safeParse(req.body);
