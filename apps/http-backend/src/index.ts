@@ -3,13 +3,12 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET } from '@repo/backend-common/config';
 import { middleware } from "./middleware";
 import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "@repo/common/types";
-import { prisma } from "@repo/db"; 
+import { prisma } from "@repo/db/client";
 import cors from "cors";
 
 const app = express();
 app.use(express.json());
 app.use(cors())
-// console.log("Backend is running")
 app.post("/signup", async (req, res) => {
 
     const parsedData = CreateUserSchema.safeParse(req.body);
