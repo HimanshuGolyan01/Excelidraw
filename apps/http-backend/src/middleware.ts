@@ -11,7 +11,7 @@ export function middleware(req: AuthRequest, res: Response, next: NextFunction) 
             return res.status(403).json({ message: "Unauthorized" });
         }
 
-        const token = header.split(" ")[1]; // Bearer abc.xyz
+        const token = header.split(" ")[1]; 
 
         const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
 
