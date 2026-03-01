@@ -2,6 +2,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "@repo/backend-common/config";
 import { PrismaClient } from "@repo/db/client";
+const prisma = new PrismaClient();
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -65,7 +66,7 @@ wss.on("connection", (ws, request) => {
     if (parsedData.type === "chat") {
       const { roomId, message } = parsedData;
 
-      await PrismaClient.chat.create({
+        await prisma.chat.create({
         data: {
           roomId: Number(roomId),
           message,

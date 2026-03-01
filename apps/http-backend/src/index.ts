@@ -102,7 +102,7 @@ app.get("/chats/:roomId", async (req, res) => {
     try {
         const roomId = Number(req.params.roomId);
         console.log(req.params.roomId);
-        const messages = await prisma.chat.findMany({  // Changed this
+        const messages = await prisma.chat.findMany({  
             where: {
                 roomId: roomId
             },
