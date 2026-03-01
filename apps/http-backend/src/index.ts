@@ -2,7 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from '@repo/backend-common/config';
 import { middleware } from "./middleware";
-import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "@repo/common/types";
+import { CreateUserSchema, SigninSchema, CreateRoomSchema, CreateChatSchema } from "@repo/common/types";
 import { prisma } from "@repo/db/client";
 import cors from "cors";
 
@@ -65,7 +65,8 @@ app.post("/signin", async (req, res) => {
     }, JWT_SECRET);
 
     res.json({
-        token
+        token,
+        userId: user.id
     })
 })
 
@@ -98,6 +99,26 @@ app.post("/room", middleware, async (req, res) => {
     }
 })
 
+app.post("/chat", middleware, async (req, res) => {
+    const parsedData = CreateChatSchema.safeParse(req.body);
+    if (!parsedData.success) {
+        res.json({ message: "Incorrect inputs" });
+        return;
+    }
+    try {
+        const chat = await prisma.chat.create({
+            data: {
+                roomId: parsedData.data.roomId,
+                message: parsedData.data.message,
+                userId: req.userId!
+            }
+        });
+        res.json({ chat });
+    } catch (e) {
+        res.status(500).json({ message: "Failed to send message" });
+    }
+});
+
 app.get("/chats/:roomId", async (req, res) => {
     try {
         const roomId = Number(req.params.roomId);
@@ -109,7 +130,7 @@ app.get("/chats/:roomId", async (req, res) => {
             orderBy: {
                 id: "desc"
             },
-            take: 1000
+            take: 50
         });
 
         res.json({
@@ -136,5 +157,24 @@ app.get("/room/:slug", async (req, res) => {
         room
     })
 })
+
+const drawingStore = new Map<number, string>();
+
+app.get("/draw/:roomId", async (req, res) => {
+    const roomId = Number(req.params.roomId);
+    const strokes = drawingStore.get(roomId) || "[]";
+    res.json({ strokes: JSON.parse(strokes) });
+});
+
+app.post("/draw/:roomId", middleware, async (req, res) => {
+    const roomId = Number(req.params.roomId);
+    const room = await prisma.room.findFirst({ where: { id: roomId } });
+    if (!room || room.adminId !== req.userId) {
+        return res.status(403).json({ message: "Only host can draw" });
+    }
+    const strokes = Array.isArray(req.body.strokes) ? req.body.strokes : req.body.strokes ? JSON.parse(req.body.strokes) : [];
+    drawingStore.set(roomId, JSON.stringify(strokes));
+    res.json({ ok: true });
+});
 
 app.listen(3001);
